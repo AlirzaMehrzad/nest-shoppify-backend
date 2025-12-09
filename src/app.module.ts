@@ -18,7 +18,7 @@ import { BullModule } from '@nestjs/bull';
     CommentsModule,
     AuthModule,
     MongooseModule.forRoot(
-      'mongodb://admin:admin123@localhost:27017/nestlearning?authSource=admin',
+      'mongodb://admin:admin123@localhost:27017/driveyfy?authSource=admin',
     ),
     BullModule.forRoot({
       redis: {

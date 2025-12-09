@@ -1,0 +1,34 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb_driveyfy_container
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb:/data/db
+    networks:
+      - driveyfy_network
+    restart: unless-stopped
+
+  redis:
+    image: redis:latest
+    container_name: redis_driveyfy_container
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis:/data
+    networks:
+      - driveyfy_network
+
+volumes:
+  mongodb:
+  redis:
+  logs:
+
+networks:
+  driveyfy_network:
+# docker compose -f docker-compose.yml up -d --build
+# docker compose -f docker-compose.yml down

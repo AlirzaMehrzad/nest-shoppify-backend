@@ -81,6 +81,7 @@ export class AuthService {
       html: loginEmailTemplate(loginDto.email),
     });
 
+    // return user data without password
     const userObj = (user as any).toObject
       ? (user as any).toObject()
       : (user as any);
