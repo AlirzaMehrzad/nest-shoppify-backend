@@ -10,8 +10,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
-    .setTitle('My nestjs application')
-    .setDescription('shoppify applciation created by nestjs')
+    .setTitle('Driveyfy API')
+    .setDescription('Driveyfy applciation created by nestjs')
     .setVersion('1.0.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);

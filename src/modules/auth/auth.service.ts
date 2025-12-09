@@ -45,6 +45,7 @@ export class AuthService {
     const newUser = await this.usersService.createUser(registerDto);
 
     const activationLink = await this.generateActivationToken(registerDto);
+
     // enqueue email to be sent in background
     await this.mailQueue.add('sendMail', {
       to: registerDto.email,
