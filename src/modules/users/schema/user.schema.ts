@@ -39,9 +39,6 @@ export class Users {
   nationalCode: string;
 
   @Prop({ type: [Object], default: [] })
-  cart: object[];
-
-  @Prop({ type: [Object], default: [] })
   favorites: object[];
 
   @Prop()

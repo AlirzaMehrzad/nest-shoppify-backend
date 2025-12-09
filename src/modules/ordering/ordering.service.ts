@@ -19,17 +19,6 @@ export class OrderingService {
     if (!userResult) {
       return { status: 404, message: 'مخاطب پیدا نشد' };
     }
-    const user = userResult;
-    user.cart = user.cart || [];
-    user.cart.push(addToCartDto);
-
-    await user.save();
-
-    return {
-      status: 200,
-      message: 'محصول به سبدخرید اضافه شد',
-      data: user.cart,
-    };
   };
 
   createOrder = async () => {};

@@ -59,11 +59,4 @@ export class UsersController {
   remove(@Param('id') id: Types.ObjectId) {
     return this.usersService.removeUserById(id);
   }
-
-  @Post('/addcart')
-  @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Add a product to user cart' })
-  addToCart(@Req() req, @Body() createProductDto: CreateProductDto) {
-    return this.usersService.addProductToCart(req, createProductDto);
-  }
 }

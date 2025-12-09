@@ -58,27 +58,36 @@ export class AuthService {
 
   login = async (loginDto: LoginDto) => {
     const user = await this.usersService.findUserByEmail(loginDto.email);
+    if (!user) {
+      throw new HttpException('پسورد یا ایمیل اشتباه است', 400);
+    }
+
     const isPasswordValid = await bcrypt.compare(
       loginDto.password,
-      user?.password,
+      user.password,
     );
     if (!isPasswordValid) {
       throw new HttpException('پسورد یا ایمیل اشتباه است', 400);
     }
 
     const jwtToken = this.jwtService.sign({
-      email: user?.email,
+      email: user.email,
     });
 
-    // send login email
+    // send login email in background
     await this.mailQueue.add('sendMail', {
       to: loginDto.email,
       subject: 'ورود جدید به حساب شما!',
       html: loginEmailTemplate(loginDto.email),
     });
 
+    const userObj = (user as any).toObject
+      ? (user as any).toObject()
+      : (user as any);
+    const { password, ...safeUser } = userObj;
+
     return {
-      user,
+      user: safeUser,
       jwtToken,
     };
   };

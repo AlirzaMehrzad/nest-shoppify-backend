@@ -88,22 +88,4 @@ export class UsersService {
       message: 'مخاطب حذف شد',
     };
   };
-
-  addProductToCart = async (req, createProductDto: CreateProductDto) => {
-    const userResult = await this.findUserByEmail(req.user.email);
-    if (!userResult) {
-      return { status: 404, message: 'مخاطب پیدا نشد' };
-    }
-    const user = userResult;
-    user.cart = user.cart || [];
-    user.cart.push(createProductDto);
-
-    await user.save();
-
-    return {
-      status: 200,
-      message: 'محصول به سبدخرید اضافه شد',
-      data: user.cart,
-    };
-  };
 }
