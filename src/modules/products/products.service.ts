@@ -26,8 +26,13 @@ export class ProductsService {
     return product;
   };
 
-  findAllProducts = async () => {
-    const prodcuts = await this.productModel.find();
+  findAllProducts = async (query) => {
+    const prodcuts = await this.productModel
+      .find()
+      .sort({ createdAt: -1 })
+      .skip((query.page - 1) * query.limit)
+      .limit(query.limit ? parseInt(query.limit) : 10);
+
     return prodcuts;
   };
 
@@ -45,8 +50,26 @@ export class ProductsService {
     return `This action updates a #${id} product`;
   }
 
-  remove(id: number) {
-    // check if the user exists before removing the product
-    return `This action removes a #${id} product`;
-  }
+  removeProduct = async (req, id) => {
+    const user = await this.usersService.findUserByEmail(req.user.email);
+    const product = await this.productModel.findOneAndUpdate(
+      {
+        _id: id,
+        owner: user?._id,
+        'deleted.status': { $ne: true },
+      },
+      {
+        $set: {
+          'deleted.status': true,
+          'deleted.deletedAt': new Date(),
+          'deleted.deletedBy': user?._id,
+        },
+      },
+      { new: true },
+    );
+
+    if (!product) return false;
+
+    return true;
+  };
 }

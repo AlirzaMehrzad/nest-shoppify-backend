@@ -8,12 +8,16 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
+  Put,
+  BadRequestException,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { Types } from 'mongoose';
+import { ParseMongoIdPipe } from 'src/common/utils/parse-mongo-id.pipe';
 
 @Controller('products')
 export class ProductsController {
@@ -35,8 +39,8 @@ export class ProductsController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async findAll() {
-    const products = await this.productsService.findAllProducts();
+  async findAll(@Query() query) {
+    const products = await this.productsService.findAllProducts(query);
     return {
       status: 200,
       message: 'Products found',
@@ -55,8 +59,15 @@ export class ProductsController {
     return this.productsService.update(+id, updateProductDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productsService.remove(+id);
+  @Put('/delete/:id')
+  @UseGuards(JwtAuthGuard)
+  async remove(@Param('id', ParseMongoIdPipe) id: string, @Req() req) {
+    const deleted = await this.productsService.removeProduct(req, id);
+
+    if (!deleted) {
+      throw new BadRequestException('حذف محصول با مشکل مواجه شد');
+    }
+
+    return { success: true, message: 'محصول با موفقیت حذف شد' };
   }
 }

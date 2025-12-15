@@ -15,6 +15,10 @@ export class CreateProductDto {
   @MaxLength(35)
   readonly title: string;
 
+  @IsString()
+  @IsNotEmpty()
+  readonly category: string;
+
   @IsNumber()
   @IsNotEmpty()
   @Min(0.01, { message: 'قیمت محصول نمیتواند صفر یا کمتر باشد' })
@@ -30,9 +34,4 @@ export class CreateProductDto {
   @IsOptional()
   @IsArray()
   readonly images: string[];
-
-  @IsNotEmpty()
-  @IsNumber()
-  @Min(1, { message: 'موجودی نمیتواند کمتر از یک باشد' })
-  readonly stock: number;
 }

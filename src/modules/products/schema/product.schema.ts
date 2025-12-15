@@ -10,6 +10,9 @@ export class Products {
   title: string;
 
   @Prop({ required: true })
+  category: string;
+
+  @Prop({ required: true })
   price: number;
 
   @Prop({ length: 250 })
@@ -18,14 +21,18 @@ export class Products {
   @Prop([String])
   images: string[];
 
-  @Prop({ default: true })
+  @Prop({ default: false })
   isActive: boolean;
 
   @Prop({ type: Types.ObjectId, ref: Users.name, required: true })
   owner: Types.ObjectId;
 
-  @Prop({ required: true })
-  stock: number;
+  @Prop({ ref: Users.name, type: Types.ObjectId })
+  deleted: {
+    status: { type: Boolean; default: false };
+    deletedAt: { type: Date; default: null };
+    deletedBy: { type: Types.ObjectId | null };
+  };
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Products);
