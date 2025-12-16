@@ -72,6 +72,7 @@ export class AuthService {
 
     const jwtToken = this.jwtService.sign({
       email: user.email,
+      id: user._id,
     });
 
     // send login email in background

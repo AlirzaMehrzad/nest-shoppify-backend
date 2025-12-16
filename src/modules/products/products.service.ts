@@ -15,10 +15,10 @@ export class ProductsService {
   ) {}
 
   createProduct = async (req, createProductDto: CreateProductDto) => {
-    const user = await this.usersService.findUserByEmail(req.user.email);
+    const userId = new Types.ObjectId(req.user.id);
     const product = await this.productModel.create({
       ...createProductDto,
-      owner: user?._id,
+      owner: userId,
     });
     if (!product)
       throw new HttpException('مشکلی در ایجاد محصول بهوجود آمد', 400);
@@ -36,33 +36,42 @@ export class ProductsService {
     return prodcuts;
   };
 
-  findProductById = async (id: Types.ObjectId) => {
+  findProductById = async (id) => {
     const product = await this.productModel.findById(id);
-    if (!product) return { status: 400, message: 'No product found' };
-    return {
-      status: 200,
-      message: 'Product found',
-      data: product,
-    };
+    if (!product) return false;
+
+    return product;
   };
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
-  }
-
-  removeProduct = async (req, id) => {
-    const user = await this.usersService.findUserByEmail(req.user.email);
+  updateProduct = async (req, id, updateProductDto: UpdateProductDto) => {
+    const userId = new Types.ObjectId(req.user.id);
     const product = await this.productModel.findOneAndUpdate(
       {
         _id: id,
-        owner: user?._id,
+        owner: userId,
+        'deleted.status': { $ne: true },
+      },
+      { $set: updateProductDto },
+      { new: true },
+    );
+    if (!product) return false;
+
+    return product;
+  };
+
+  removeProduct = async (req, id) => {
+    const userId = new Types.ObjectId(req.user.id);
+    const product = await this.productModel.findOneAndUpdate(
+      {
+        _id: id,
+        owner: userId,
         'deleted.status': { $ne: true },
       },
       {
         $set: {
           'deleted.status': true,
           'deleted.deletedAt': new Date(),
-          'deleted.deletedBy': user?._id,
+          'deleted.deletedBy': userId,
         },
       },
       { new: true },
